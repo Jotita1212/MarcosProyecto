@@ -35,7 +35,7 @@ export function ReniecConsultButton({
       
       if (data) {
         setStatus('success');
-        setMessage('Datos obtenidos correctamente');
+        setMessage('Nombres y apellidos obtenidos');
         onDataReceived(data);
       } else {
         setStatus('error');
@@ -100,6 +100,11 @@ export function ReniecConsultButton({
             'text-blue-700 bg-blue-100 dark:text-blue-300 dark:bg-blue-900/30'}
         `}>
           {message}
+          {status === 'success' && (
+            <div className="text-xs mt-1 opacity-75">
+              Completa edad y género manualmente
+            </div>
+          )}
         </div>
       )}
     </div>

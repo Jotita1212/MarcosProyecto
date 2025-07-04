@@ -1,14 +1,14 @@
-// Servicio para integración con RENIEC - API actualizada con género corregido
+// Servicio para integración con RENIEC - Solo autocompletar nombre y apellidos
 export interface ReniecData {
   dni: string;
   nombres: string;
   apellidoPaterno: string;
   apellidoMaterno: string;
-  fechaNacimiento: string;
-  sexo: 'M' | 'F';
-  estadoCivil: string;
-  ubigeo: string;
-  direccion: string;
+  fechaNacimiento?: string;
+  sexo?: 'M' | 'F';
+  estadoCivil?: string;
+  ubigeo?: string;
+  direccion?: string;
 }
 
 export interface ParentescoData {
@@ -51,24 +51,14 @@ class ReniecService {
           if (data.success && data.data) {
             const personData = data.data;
             
-            // Corregir el mapeo del género
-            let sexo: 'M' | 'F' = 'M';
-            if (personData.sexo) {
-              const sexoStr = personData.sexo.toString().toUpperCase();
-              if (sexoStr === 'FEMENINO' || sexoStr === 'F' || sexoStr === 'MUJER') {
-                sexo = 'F';
-              } else if (sexoStr === 'MASCULINO' || sexoStr === 'M' || sexoStr === 'HOMBRE') {
-                sexo = 'M';
-              }
-            }
-            
             return {
               dni: personData.numero || dni,
               nombres: personData.nombres || '',
               apellidoPaterno: personData.apellido_paterno || '',
               apellidoMaterno: personData.apellido_materno || '',
+              // Solo incluir datos básicos, el resto lo llenará el usuario
               fechaNacimiento: personData.fecha_nacimiento || '',
-              sexo: sexo,
+              sexo: undefined, // El usuario lo seleccionará manualmente
               estadoCivil: personData.estado_civil || '',
               ubigeo: personData.ubigeo || '',
               direccion: personData.direccion || ''
@@ -93,72 +83,43 @@ class ReniecService {
 
   private getFallbackData(dni: string): ReniecData | null {
     // Datos simulados para demo cuando la API real no esté disponible
+    // Solo nombres y apellidos, el resto lo llenará el usuario
     const mockData: { [key: string]: ReniecData } = {
       '12345678': {
         dni: '12345678',
         nombres: 'MARIA ELENA',
         apellidoPaterno: 'GONZALEZ',
-        apellidoMaterno: 'PEREZ',
-        fechaNacimiento: '1990-05-15',
-        sexo: 'F',
-        estadoCivil: 'SOLTERO',
-        ubigeo: '150101',
-        direccion: 'AV LIMA 123 LIMA LIMA'
+        apellidoMaterno: 'PEREZ'
       },
       '87654321': {
         dni: '87654321',
         nombres: 'CARLOS ALBERTO',
         apellidoPaterno: 'MENDOZA',
-        apellidoMaterno: 'SILVA',
-        fechaNacimiento: '1985-08-22',
-        sexo: 'M',
-        estadoCivil: 'CASADO',
-        ubigeo: '150101',
-        direccion: 'JR AREQUIPA 456 LIMA LIMA'
+        apellidoMaterno: 'SILVA'
       },
       '11223344': {
         dni: '11223344',
         nombres: 'ANA LUCIA',
         apellidoPaterno: 'RODRIGUEZ',
-        apellidoMaterno: 'LOPEZ',
-        fechaNacimiento: '2010-03-10',
-        sexo: 'F',
-        estadoCivil: 'SOLTERO',
-        ubigeo: '150101',
-        direccion: 'AV BRASIL 789 LIMA LIMA'
+        apellidoMaterno: 'LOPEZ'
       },
       '46027897': {
         dni: '46027897',
         nombres: 'JUAN CARLOS',
         apellidoPaterno: 'VARGAS',
-        apellidoMaterno: 'TORRES',
-        fechaNacimiento: '1988-12-03',
-        sexo: 'M',
-        estadoCivil: 'SOLTERO',
-        ubigeo: '150101',
-        direccion: 'AV UNIVERSITARIA 1801 LIMA LIMA'
+        apellidoMaterno: 'TORRES'
       },
       '70123456': {
         dni: '70123456',
         nombres: 'SOFIA ALEJANDRA',
         apellidoPaterno: 'MARTINEZ',
-        apellidoMaterno: 'FLORES',
-        fechaNacimiento: '1992-11-28',
-        sexo: 'F',
-        estadoCivil: 'SOLTERO',
-        ubigeo: '150101',
-        direccion: 'AV SALAVERRY 2850 LIMA LIMA'
+        apellidoMaterno: 'FLORES'
       },
       '45678901': {
         dni: '45678901',
         nombres: 'DIEGO FERNANDO',
         apellidoPaterno: 'CASTRO',
-        apellidoMaterno: 'RUIZ',
-        fechaNacimiento: '1987-07-14',
-        sexo: 'M',
-        estadoCivil: 'CASADO',
-        ubigeo: '150101',
-        direccion: 'JR CUSCO 1234 LIMA LIMA'
+        apellidoMaterno: 'RUIZ'
       }
     };
 
@@ -168,7 +129,6 @@ class ReniecService {
   async verificarParentesco(dniMenor: string, dniAdulto: string): Promise<ParentescoData | null> {
     try {
       // Simulación de verificación de parentesco
-      // En una implementación real, esto podría conectarse a RENIEC o SUNAT
       await new Promise(resolve => setTimeout(resolve, 800));
       
       console.log(`Verificando parentesco entre ${dniMenor} y ${dniAdulto}`);

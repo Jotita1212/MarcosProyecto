@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { User, CreditCard, CheckCircle, AlertCircle, UserCheck, Baby, FileText, Phone, Heart, Search, Save, Database } from 'lucide-react';
+import { User, CreditCard, CheckCircle, AlertCircle, UserCheck, Baby, FileText, Phone, Heart, Search, Save, Database, Users } from 'lucide-react';
 import { Viaje, SearchFilters, Cliente } from '../types';
 import { reniecService, ReniecData } from '../services/reniecService';
 import { databaseService, PasajeData } from '../services/databaseService';
@@ -108,16 +108,13 @@ export function BookingPage() {
   };
 
   const handleReniecDataReceived = (index: number, data: ReniecData) => {
-    const edad = reniecService.calcularEdad(data.fechaNacimiento);
     const newData = [...passengerData];
     newData[index] = {
       ...newData[index],
       nombre: reniecService.formatearNombre(data.nombres),
       apellidos: `${reniecService.formatearNombre(data.apellidoPaterno)} ${reniecService.formatearNombre(data.apellidoMaterno)}`,
       dni: data.dni,
-      edad: edad,
-      genero: data.sexo,
-      esmenor: edad < 18
+      // No autocompletar edad y género, el usuario los ingresará manualmente
     };
     setPassengerData(newData);
   };
@@ -304,13 +301,13 @@ export function BookingPage() {
                       </div>
                       <div className="flex items-center space-x-2">
                         <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg flex items-center justify-center shadow-lg">
-                          <span className="text-white text-xs font-bold">♂</span>
+                          <span className="text-white text-xs font-bold">👨</span>
                         </div>
                         <span className="text-gray-700 dark:text-gray-300 font-medium">Ocupado (Hombre)</span>
                       </div>
                       <div className="flex items-center space-x-2">
                         <div className="w-8 h-8 bg-gradient-to-r from-pink-500 to-pink-600 rounded-lg flex items-center justify-center shadow-lg">
-                          <span className="text-white text-xs font-bold">♀</span>
+                          <span className="text-white text-xs font-bold">👩</span>
                         </div>
                         <span className="text-gray-700 dark:text-gray-300 font-medium">Ocupado (Mujer)</span>
                       </div>
@@ -342,7 +339,7 @@ export function BookingPage() {
                           title={seat.isOccupied ? `Ocupado por ${seat.occupiedBy?.name}` : `Asiento ${seat.number}`}
                         >
                           {seat.isOccupied ? (
-                            seat.occupiedBy?.gender === 'M' ? '♂' : '♀'
+                            seat.occupiedBy?.gender === 'M' ? '👨' : '👩'
                           ) : (
                             seat.number
                           )}
@@ -466,8 +463,8 @@ export function BookingPage() {
                               required
                             >
                               <option value="">Seleccionar</option>
-                              <option value="M">Masculino</option>
-                              <option value="F">Femenino</option>
+                              <option value="M">👨 Masculino</option>
+                              <option value="F">👩 Femenino</option>
                             </select>
                           </div>
                           <div className="md:col-span-2">
